@@ -1,7 +1,7 @@
 import express from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { z } from "zod";
 
 const server = new McpServer({
   name: "example-server",
@@ -13,8 +13,29 @@ const server = new McpServer({
 const app = express();
 app.use(express.json());
 
+server.tool(
+  "addTwoNumbers",
+  "Add two numbers",
+  {
+    a: z.number(),
+    b: z.number(),
+  },
+  async (arg) => {
+    const { a, b } = arg;
+    return [
+      {
+        type: "text",
+        text: `The sum of ${a} and ${b} is ${a + b}`,
+      },
+    ];
+  }
+);
+
 // Store transports for each session type
-const transports = {};
+const transports = {
+  streamable: {},
+  sse: {},
+};
 
 // Legacy SSE endpoint for older clients
 app.get("/sse", async (req, res) => {
