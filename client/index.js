@@ -43,18 +43,51 @@ mcpClient
     // console.log("Available tools :", tools);
   });
 
-async function userInputLoop() {
-  const question = await rl.question("You: ");
+async function userInputLoop(toolCall) {
+  if (toolCall) {
+    // console.log("calling tool ", toolCall.name);
 
-  chatHistory.push({
-    role: "user",
-    parts: [
-      {
-        text: question,
-        type: "text",
-      },
-    ],
-  });
+    chatHistory.push({
+      role: "model",
+      parts: [
+        {
+          text: `calling tool ${toolCall.name}`,
+          type: "text",
+        },
+      ],
+    });
+
+    const toolResult = await mcpClient.callTool({
+      name: toolCall.name,
+      arguments: toolCall.args,
+    });
+
+    // console.log(toolResult);
+    chatHistory.push({
+      role: "user",
+      parts: [
+        {
+          text: "Tool Result : " + toolResult.content[0].text,
+          type: "text",
+        },
+      ],
+    });
+  } else {
+    // ask question
+    const question = await rl.question("You: ");
+
+    chatHistory.push({
+      role: "user",
+      parts: [
+        {
+          text: question,
+          type: "text",
+        },
+      ],
+    });
+  }
+
+  // const question = await rl.question("You: ");
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -69,7 +102,14 @@ async function userInputLoop() {
   });
 
   // console.log(response.candidates[0].content.parts[0].text);
+
+  const functionCall = response.candidates[0].content.parts[0].functionCall;
   const responseText = response.candidates[0].content.parts[0].text;
+
+  if (functionCall) {
+    return userInputLoop(functionCall);
+  }
+
   chatHistory.push({
     role: "model",
     parts: [
