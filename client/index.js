@@ -45,7 +45,7 @@ mcpClient
 
 async function userInputLoop(toolCall) {
   if (toolCall) {
-    // console.log("calling tool ", toolCall.name);
+    console.log("calling tool ", toolCall.name);
 
     chatHistory.push({
       role: "model",
