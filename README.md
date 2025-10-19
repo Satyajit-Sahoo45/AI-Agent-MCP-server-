@@ -15,7 +15,7 @@ It leverages **Gemini AI** for generating creative content and integrates with *
 
 ## 🧩 Tech Stack
 
-- **Server:** Node.js (MCP Server)  
+- **Client/Server(MCP Server) :** Node.js 
 - **AI Model:** Gemini AI  
 - **API:** X (Twitter) API using `twitter-api-v2`  
 
