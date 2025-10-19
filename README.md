@@ -50,6 +50,8 @@ cd Agent-X
 ```
 
 ## Project Structure
+```bash
+
 Agent-X/
 ├── client/
 │   ├── index.js
@@ -60,3 +62,4 @@ Agent-X/
 │   ├── package.json
 │   └── .env
 ├── README.md
+```
